@@ -11,25 +11,34 @@ export function Navbar() {
 
   useEffect(() => {
     setMounted(true);
-    const saved = localStorage.getItem('theme-mode');
-    const t = saved === 'dark' || saved === 'light' ? saved : 'light';
-    setTheme(t);
-    document.documentElement.dataset.theme = t;
-    document.documentElement.classList.toggle('dark', t === 'dark');
+    try {
+      const saved = localStorage.getItem('theme-mode');
+      const t = saved === 'dark' || saved === 'light' ? saved : 'light';
+      setTheme(t);
+      document.documentElement.dataset.theme = t;
+      document.documentElement.classList.toggle('dark', t === 'dark');
+    } catch {
+      setTheme('light');
+      document.documentElement.dataset.theme = 'light';
+    }
   }, []);
 
   useEffect(() => {
     if (!mounted) return;
     document.documentElement.dataset.theme = theme;
     document.documentElement.classList.toggle('dark', theme === 'dark');
-    localStorage.setItem('theme-mode', theme);
+    try {
+      localStorage.setItem('theme-mode', theme);
+    } catch {
+      // Storage unavailable or restricted
+    }
   }, [theme, mounted]);
 
   const handleToggle = () => setTheme((t) => (t === 'light' ? 'dark' : 'light'));
   const closeMobile = () => setMobileOpen(false);
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b border-border bg-background/80 backdrop-blur-md">
+    <header className="sticky top-0 z-40 w-full border-b border-border bg-background/80 backdrop-blur-md">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-6 px-4 py-2 sm:px-6 lg:px-8">
         <Link href="/" className="flex items-center gap-2" onClick={closeMobile}>
           <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
